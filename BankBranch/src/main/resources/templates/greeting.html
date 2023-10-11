@@ -4,31 +4,39 @@
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+    <!-- Подключение Leaflet.js -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-providers/leaflet-providers.js"></script>
+
+    <!-- Подключение плагина для работы с маршрутами -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
 </head>
 <body>
 <p th:text="'Hello, ' + ${name} + '!'" />
 
 
-<div id="map" style="height: 500px;"></div>
+<div id="map" style="width: 1024px; height: 768px;"></div>
 
-<script>
-    var map = L.map('map').setView([51.505, -0.09], 13);
+<script type="text/javascript">
+    var map = L.map('map').setView([55.781863, 49.124884], 13);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-L.marker([51.5, -0.09]).addTo(map)
-    .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-    .openPopup();
+    var point1 = L.marker([55.781863, 49.124884]).addTo(map);
+    var point2 = L.marker([55.795343, 49.106515]).addTo(map);
 
-    L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
-  </script>
-
-
+    L.Routing.control({
+        waypoints: [
+            L.latLng(55.781863, 49.124884),
+            L.latLng(55.795343, 49.106515)
+        ],
+        routeWhileDragging: true
+    }).addTo(map);
+</script>
 
 
 </body>
