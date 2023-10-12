@@ -1,6 +1,7 @@
 package com.example.BankBranch.controller;
 
 import com.example.BankBranch.dto.PlacesResponse;
+import com.example.BankBranch.dto.RoutResponse;
 import com.example.BankBranch.service.GraphHopperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,12 +31,12 @@ public class GreetingController {
 
 //        System.out.println(graphHopperService.findRoute(55.781863, 49.124884,55.795343, 49.106515));
 //        System.out.println(graphHopperService.findPlace("Казань, Школа 21"));
-        double startLat = 55.781863;
-        double startLon = 49.124884;
-        double endLat = 55.795343;
-        double endLon = 49.106515;
+        double startLat = 55.840263;
+        double startLon = 49.081644;
+        double endLat = 55.750481;
+        double endLon = 49.209544;
 
-        String url = String.format("https://graphhopper.com/api/1/route?point=%s,%s&point=%s,%s&profile=car&locale=de&calc_points=false&key=%s",
+        String routUrl = String.format("https://graphhopper.com/api/1/route?point=%s,%s&point=%s,%s&profile=car&locale=de&calc_points=false&key=%s",
                 startLat,
                 startLon,
                 endLat,
@@ -51,6 +52,12 @@ public class GreetingController {
         PlacesResponse placesResponse = restTemplate.getForObject(placeUrl, PlacesResponse.class);
 
         System.out.println(placesResponse);
+
+        RoutResponse routResponse = restTemplate.getForObject(routUrl, RoutResponse.class);
+
+        System.out.println();
+
+        System.out.println(routResponse);
 
         return "greeting";
     }
