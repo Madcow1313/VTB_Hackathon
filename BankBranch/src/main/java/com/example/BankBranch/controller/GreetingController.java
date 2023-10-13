@@ -2,6 +2,7 @@ package com.example.BankBranch.controller;
 
 import com.example.BankBranch.dto.PlacesResponse;
 import com.example.BankBranch.dto.RoutResponse;
+import com.example.BankBranch.model.Point;
 import com.example.BankBranch.service.GraphHopperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +51,7 @@ public class GreetingController {
                 place,
                 graphhopperApiKey);
 
-        PlacesResponse placesResponse = restTemplate.getForObject(placeUrl, PlacesResponse.class);
+        PlacesResponse placesResponse = graphHopperService.getPlaceResponse(place);
 
         System.out.println(placesResponse);
 
@@ -64,13 +65,40 @@ public class GreetingController {
     }
 
     @PostMapping("/findPlace")
-    public String findPlace() {
+    public String findPlace(@RequestParam(required = false, defaultValue = "") String findPlace,
+                            Model model) {
+
+        PlacesResponse placesResponse = null;
+        System.out.println(findPlace);
+        if (!findPlace.isEmpty()) {
+            placesResponse = graphHopperService.getPlaceResponse(findPlace);
+            model.addAttribute("point", placesResponse.getHits().get(0));
+            model.addAttribute("pointLat", placesResponse.getHits().get(0).getPoint().getLat());
+            model.addAttribute("pointLng", placesResponse.getHits().get(0).getPoint().getLng());
+        }
+
+        if (placesResponse != null) {
+            System.out.println("pointLat = " + placesResponse.getHits().get(0).getPoint().getLat() +
+                    "\npointLng = " + placesResponse.getHits().get(0).getPoint().getLng());
+        }
+
+
         return "greeting";
     }
 
-    @PostMapping("/createPath")
-    public String createPath() {
-        return "greeting";
+    @PostMapping("/buildRoute")
+    public String createPath(@RequestParam(required = false, defaultValue = "") String address1,
+                             @RequestParam(required = false, defaultValue = "") String address2,
+                             Model model) throws IOException {
+        System.out.println(address1 + address2);
+
+        Point point1 = graphHopperService.getPlaceResponse(address1).getFirstPoint();
+        Point point2 = graphHopperService.getPlaceResponse(address2).getFirstPoint();
+
+        model.addAttribute("point1", point1);
+        model.addAttribute("point2", point2);
+
+        return "buildRoute";
     }
 
 

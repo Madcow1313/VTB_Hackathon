@@ -25,18 +25,21 @@
 
 <div class="container p-4">
 
-    <p th:text="'Hello, ' + ${name} + '!'"/>
+    <h3>build a route</h3>
 
-    <p th:text="${pointLat}"/>
-
-
-    <div th:replace="~{fragments/findPlace :: findPlace}">findPlace</div>
-
-    <div th:replace="~{fragments/createPath :: createPath}">createPath</div>
-
+    <p th:text="${point1}"/>
+    <p th:text="${point2}"/>
+    <br>
+    <a class="icon-link icon-link-hover" href="/">
+        Icon link
+        <svg class="bi" aria-hidden="true"><use xlink:href="#arrow-right"></use></svg>
+    </a>
+    <br>
 
     <div id="map" style="width: 1024px; height: 768px;"
-         th:data-lat="${pointLat}" th:data-lng="${pointLng}"></div>
+         th:point1 = ${point1}
+         th:data-lat="${pointLat}"
+         th:data-lng="${pointLng}"></div>
 
     <script type="text/javascript">
 
@@ -65,13 +68,13 @@ var point = L.marker([lat, lng]).addTo(map);
 
 
 
-<!--    L.Routing.control({-->
-<!--        waypoints: [-->
-<!--            L.latLng(55.781863, 49.124884),-->
-<!--            L.latLng(55.795343, 49.106515)-->
-<!--        ],-->
-<!--        routeWhileDragging: true-->
-<!--    }).addTo(map);-->
+    L.Routing.control({
+        waypoints: [
+            L.latLng(55.781863, 49.124884),
+            L.latLng(55.795343, 49.106515)
+        ],
+        routeWhileDragging: true
+    }).addTo(map);
 
 
 

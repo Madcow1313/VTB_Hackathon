@@ -1,11 +1,14 @@
 package com.example.BankBranch.service;
 
+import com.example.BankBranch.dto.PlacesResponse;
+import com.example.BankBranch.dto.RoutResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -17,6 +20,9 @@ public class GraphHopperService {
 
     @Autowired
     private OkHttpClient client;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     public String findRoute(double startLat, double startLon, double endLat, double endLon) throws IOException {
 
@@ -53,4 +59,10 @@ public class GraphHopperService {
     }
 
 
+    public PlacesResponse getPlaceResponse(String place) {
+        String placeUrl = String.format("https://graphhopper.com/api/1/geocode?q=%s&locale=de&key=%s",
+                place,
+                graphhopperApiKey);
+        return restTemplate.getForObject(placeUrl, PlacesResponse.class);
+    }
 }
