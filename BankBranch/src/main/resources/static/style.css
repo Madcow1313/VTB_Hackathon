@@ -1,0 +1,29 @@
+.parent {
+    display: flex;
+    justify-content: center !important;
+}
+
+.map_window {
+    border-radius: 8px;
+}
+
+.button {
+    background-color: lightgray;
+    color: #0e36ca;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding: 8px;
+    height: 40px;
+    min-width: 100px;
+    width: fit-content;
+}
+
+/*input[type='text'] {*/
+/*    !*width: 336px;*!*/
+/*    !*height: 40px;*!*/
+/*    border: none;*/
+/*    background-color: whitesmoke;*/
+/*    border-radius: 8px;*/
+/*    margin: 10px;*/
+/*    margin-top: 25px;*/
+/*}*/

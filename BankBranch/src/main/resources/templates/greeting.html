@@ -4,7 +4,7 @@
     <title>Getting Started: Serving Web Content</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" th:href="@{style.css}" type="text/css"/>
     <!-- Подключение Leaflet.js -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -20,10 +20,10 @@
           crossorigin="anonymous">
 
 </head>
-<body>
+<body style="background-color: #ffffff; color: #2f3441;">
 
 
-<div class="container p-4">
+<!-- <div class="container p-4">
 
     <p th:text="'Hello, ' + ${name} + '!'"/>
 
@@ -31,30 +31,55 @@
     <div th:replace="~{fragments/findPlace :: findPlace}">findPlace</div>
 
     <div th:replace="~{fragments/createPath :: createPath}">createPath</div>
-
-
-    <div id="map" style="width: 1024px; height: 768px;"></div>
-
-    <script type="text/javascript">
+</div> -->
+<div class="parent">
+    <div id="map" class="map_window" style="width: 1024px; height: 768px;"></div>
+</div>
+<div class="container p-4" ></div>
+<div th:replace="~{fragments/findPlace :: findPlace}">findPlace</div>
+<div th:replace="~{fragments/createPath :: createPath}">createPath</div>
+<!--<div class="parent">-->
+<!--    <div id="test_button1" class="button">test_button1</div>-->
+<!--</div>-->
+<script type="text/javascript">
     var map = L.map('map').setView([55.781863, 49.124884], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
+    let r = null
+    map.on('click', onMapClick);
+    let point1 = L.marker([55.781863, 49.124884]);
+    map.addLayer(point1);
+    let point2 = L.marker([55.795343, 49.106515]).addTo(map);
+    function onMapClick(e) {
+        if (r != null) {
+            map.removeControl(r);
+            r = null;
+        }
+        map.removeLayer(point1)
+        point1 = L.marker(e.latlng)
+        map.addLayer(point1)
+        r = L.Routing.control({
+            waypoints: [
+                point2.getLatLng(),
+                point1.getLatLng()
+            ],
+            routeWhileDragging: true
+        })
+        r.addTo(map)
 
-    var point1 = L.marker([55.781863, 49.124884]).addTo(map);
-    var point2 = L.marker([55.795343, 49.106515]).addTo(map);
-
-    L.Routing.control({
-        waypoints: [
-            L.latLng(55.781863, 49.124884),
-            L.latLng(55.795343, 49.106515)
-        ],
-        routeWhileDragging: true
-    }).addTo(map);
+    }
+    // L.Routing.control({
+    //     waypoints: [
+    //         L.latLng(55.781863, 49.124884),
+    //         L.latLng(55.795343, 49.106515),
+    //         point1.getLatLng()
+    //     ],
+    //     routeWhileDragging: true
+    // }).addTo(map);
 
 </script>
-
 </div>
 
 
