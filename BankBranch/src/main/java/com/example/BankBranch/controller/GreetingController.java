@@ -54,9 +54,9 @@ public class GreetingController {
                 System.out.println("lat: " + lat);
                 System.out.println("lng: " + lng);
 
-                Point userPoint = new Point(USER_Latitude, USER_Longitude);
+                Point userPoint = new Point(lat, lng);
 
-                List<SalePointDto> salePointDtoList = graphHopperService.findNearestBranches(USER_Latitude, USER_Longitude, storage.getSalePointDtoList());
+                List<SalePointDto> salePointDtoList = graphHopperService.findNearestBranches(lat, lng, storage.getSalePointDtoList());
                 salePointDtoList.forEach(System.out::println);
 
                 Optional<RoutResponse> optionalRoutResponse = graphHopperService.findOptimalRoute(salePointDtoList, userPoint);
@@ -64,6 +64,7 @@ public class GreetingController {
                 if (optionalRoutResponse.isPresent()) {
                     model.addAttribute("endLat", optionalRoutResponse.get().getEndLat());
                     model.addAttribute("endLon", optionalRoutResponse.get().getEndLon());
+                    model.addAttribute("message", "message");
 
                     System.out.println("######## endLat " + optionalRoutResponse.get().getEndLat());
                     System.out.println("######## endLon " + optionalRoutResponse.get().getEndLon());

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class GraphHopperService {
 
-    private static final int NUM_NEAREST_BRANCHES = 10;
+    private static final int NUM_NEAREST_BRANCHES = 3;
 //    private static final double USER_Latitude = 55.755864;
 //    private static final double USER_Longitude = 37.617698;
 
