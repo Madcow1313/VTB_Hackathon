@@ -28,8 +28,8 @@
 
 
 
-<p th:text="${endLat}"/>
-<p th:text="${endLon}"/>
+<p id="endlat" th:text="${endLat}"/>
+<p id="endlon" th:text="${endLon}"/>
 <!-- <div class="container p-4">
 
     <p th:text="'Hello, ' + ${name} + '!'"/>
@@ -81,7 +81,7 @@
 <!--<div class="parent">-->
 <!--    <div id="test_button1" class="button">test_button1</div>-->
 <!--</div>-->
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
 
     let banks = new Map()
     let walkingBtn = document.getElementById('walking')
@@ -138,6 +138,8 @@
     drawBanks()
     // point1.on('click', onMapClick)
     let point2 = L.marker([55.802387, 49.185576], {icon: iconBank});
+    point2 = L.marker([document.getElementById('endlat').getAttribute('th:text'),
+        document.getElementById('endlon').getAttribute('th:text')], {icon: iconBank})
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
@@ -212,14 +214,17 @@
         });
         console.log(data)
         xhr.open("GET", "http://localhost:8080?data=" + encodeURIComponent(data))
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                console.log(xhr.responseText)
+                var mapElement = document.getElementById('map');
+                L.marker([ parseFloat([[${endLat}]]), parseFloat([[${endLon}]])]).addTo(map)
+            }
+        }
         xhr.setRequestHeader("Content-Type", "application/json");
-        // xhr.onreadystatechange = function () {
-        //     if (xhr.readyState === 4 && xhr.status === 200) {
-        //         let json = JSON.parse(xhr.responseText);
-        //         console.log(json.email + ", " + json.password);
-        //     }
-        // };
         console.log(point1.getLatLng())
+        // L.marker([document.getElementById('endlat').getAttribute('th:text'),
+        //     document.getElementById('endlon').getAttribute('th:text')], {icon: iconBank}).addTo(map)
         xhr.send(data);
     })
 
