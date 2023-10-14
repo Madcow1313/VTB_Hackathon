@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -49,4 +50,8 @@ public class SalePoint {
     private boolean kep;
 
     private boolean myBranch;
+
+    private Set<String> servicesIndividual;
+    private Set<String> servicesLegalEntity;
+    private Long workload;
 }

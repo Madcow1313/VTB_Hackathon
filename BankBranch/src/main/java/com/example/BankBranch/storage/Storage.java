@@ -14,9 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -37,11 +35,53 @@ public class Storage {
             SalePoint[] salePoints = objectMapper.readValue(jsonString, SalePoint[].class);
             salePointList.addAll(Arrays.asList(salePoints));
 
+            generateAdditionalData();
+
             log.info("Storage salePointList.size() = {}", salePointList.size());
+            log.info("first salePoints {}", salePointList.get(0));
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void generateAdditionalData() {
+
+        // Список возможных услуг
+        List<String> possibleServices = Arrays.asList(
+                "кредит",
+                "кредит",
+                "кредит",
+                "лизинг",
+                "лизинг",
+                "эквайринг",
+                "банкомат",
+                "банкомат",
+                "банкомат");
+
+        Random random = new Random();
+
+        salePointList.forEach(salePoint -> {
+
+            salePoint.setServicesIndividual(new HashSet<>());
+            // Генерация случайных услуг для servicesIndividual
+            int numberOfServices = random.nextInt(possibleServices.size()); // Количество случайных услуг
+            for (int i = 0; i < numberOfServices; i++) {
+                int randomIndex = random.nextInt(possibleServices.size());
+                String service = possibleServices.get(randomIndex);
+                salePoint.getServicesIndividual().add(service);
+            }
+
+            salePoint.setServicesLegalEntity(new HashSet<>());
+            // Генерация случайных услуг для servicesLegalEntity
+            numberOfServices = random.nextInt(possibleServices.size()); // Количество случайных услуг
+            for (int i = 0; i < numberOfServices; i++) {
+                int randomIndex = random.nextInt(possibleServices.size());
+                String service = possibleServices.get(randomIndex);
+                salePoint.getServicesLegalEntity().add(service);
+            }
+            salePoint.setWorkload((long) (random.nextInt(15) + 5) * 60000); // Время в миллисекундах
+        });
     }
 
 
