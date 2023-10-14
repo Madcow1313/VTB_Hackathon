@@ -1,6 +1,7 @@
 package com.example.BankBranch.dto;
 
 import com.example.BankBranch.model.GHGeocodingEntry;
+import com.example.BankBranch.model.Point;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -10,6 +11,10 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PlacesResponse {
     List<GHGeocodingEntry> hits;
+
+    public Point getFirstPoint() {
+        return hits.get(0).getPoint();
+    }
 }
 
 /*
