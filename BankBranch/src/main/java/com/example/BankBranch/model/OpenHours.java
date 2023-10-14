@@ -12,5 +12,4 @@ public class OpenHours {
     @JsonProperty("hours")
     private String hours;
 
-    // Добавьте геттеры и сеттеры
 }

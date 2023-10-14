@@ -22,17 +22,11 @@ import java.util.Optional;
 @Controller
 public class GreetingController {
 
-    private static final double USER_Latitude = 55.755864;
-    private static final double USER_Longitude = 37.617698;
-
     @Value("${graphhopper.api.key}")
     private String graphhopperApiKey;
 
     @Autowired
     private GraphHopperService graphHopperService;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Autowired
     private Storage storage;
@@ -42,9 +36,9 @@ public class GreetingController {
         return "greeting";
     }
 
-        @PostMapping("/")
-        public String handleJsonRequest(@RequestBody InputData request,
-                                        Model model) {
+    @PostMapping("/")
+    public String handleJsonRequest(@RequestBody InputData request,
+                                    Model model) {
         try {
 
             if (request != null) {
@@ -70,6 +64,7 @@ public class GreetingController {
                     System.out.println("######## endLon " + optionalRoutResponse.get().getEndLon());
                 }
                 model.addAttribute("message", "false");
+                model.addAttribute("allSalePoint", storage.getSalePointList() );
 
             } else {
                 System.out.println("Invalid JSON structure: latlng or its components are missing.");
@@ -81,6 +76,6 @@ public class GreetingController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-            return "greeting";
-        }
+        return "greeting";
+    }
 }
