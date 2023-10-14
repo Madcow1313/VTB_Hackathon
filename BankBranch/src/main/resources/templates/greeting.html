@@ -20,6 +20,10 @@
           crossorigin="anonymous">
 
 </head>
+<header>
+    <div style="height: 50px; background-attachment: fixed; background-color: #002882
+    ;
+     margin: -10px; margin-top: -18px;"><img src="VTB_white_logo.png" style="position: absolute; margin: 8px; margin-bottom: 150px; width: 100px; height: 57px"></div>
 <body style="background-color: #ffffff; color: #2f3441;">
 
 
@@ -39,14 +43,15 @@
     <br>
     <label>Телефон: 12-345-67-89</label>
 </div>
-<div class="parent">
+<div class="parent" style="margin-top: 20px">
     <div id="map" class="map_window" style="width: 1024px; height: 768px;"></div>
 </div>
 <div class="parent">
     <label>Кликните на карту, чтобы построить маршрут</label>
 </div>
 <div class="parent">
-    <button id="userPosButton" class="button">Сбросить</button>
+    <button id="recommended" class="button">Рекомендуемое отделение</button>
+
     <select id="user_type" class="dropDown" style="margin-left: 10px;">
         <option value="physical">Юридическое лицо</option>
         <option value="company">Физическое лицо</option>
@@ -61,7 +66,7 @@
         style="height: 30px; width: 30px"
         >
     </button>
-    <button id="recommended" class="button">Рекомендуемое отделение</button>
+    <button id="userPosButton" class="button">Сбросить</button>
 </div>
 <div class="parent">
 </div>
@@ -91,7 +96,7 @@
     }
     let map = L.map('map').setView([0,0], 13);
     let point1 =  L.marker([55.781863, 49.124884], {icon: iconUser});
-
+    let hasVehicle = false
     banks.set(1, L.marker([55.792387, 49.185576], {icon: iconBank}))
     banks.set(2, L.marker([55.802387, 49.185576], {icon: iconBank}))
 
@@ -99,8 +104,10 @@
         let img = document.getElementById('vehicle')
         if (img.getAttribute('src') === 'icon-walk.png') {
             img.setAttribute('src', 'car.png')
+            hasVehicle = true
         } else {
             img.setAttribute('src', 'icon-walk.png')
+            hasVehicle = false
         }
 
     })
@@ -143,7 +150,7 @@
         point2 = L.marker(e.latlng,{icon: iconBank})
         r = L.Routing.control({
             waypoints: [
-                point2.getLatLng(),
+                e.latlng,
                 point1.getLatLng()
             ],
             routeWhileDragging: true
@@ -168,7 +175,6 @@
         })
         r.addTo(map)
         info.style.visibility = "visible"
-
     }
     // L.Routing.control({
     //     waypoints: [
@@ -185,7 +191,13 @@
     let service = document.getElementById('service')
 
     rec.addEventListener('click', ()=> {
-        let data = JSON.stringify({"latlng": point1.getLatLng()});
+        let data = JSON.stringify({
+            "latlng": point1.getLatLng(),
+            "service": service.value,
+            "user_type": userType.value,
+            "vehicle": hasVehicle ? "Yes" : "NO"
+        });
+        console.log(data)
         xhr.open("GET", "http://localhost:8080?data=" + encodeURIComponent(data))
         xhr.setRequestHeader("Content-Type", "application/json");
         // xhr.onreadystatechange = function () {
