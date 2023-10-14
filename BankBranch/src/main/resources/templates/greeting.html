@@ -218,7 +218,7 @@
             "vehicle": hasVehicle ? "Yes" : "NO"
         });
         console.log(data)
-        xhr.open("GET", "http://localhost:8080?data=" + encodeURIComponent(data))
+        xhr.open("POST", "http://localhost:8080?data=" + encodeURIComponent(data))
         // xhr.open("POST", "http://localhost:8080")
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE) {
@@ -227,6 +227,10 @@
                 let el = new DOMParser().parseFromString(xhr.responseText, "text/html")
                 console.log("new",el.getElementById("endlat").getAttribute("value"))
                 console.log("new",el.getElementById("endlon").getAttribute("value"))
+                if (r != null) {
+                    map.removeControl(r);
+                    r = null;
+                }
                 r = L.Routing.control({
                     waypoints: [
                         [el.getElementById("endlat").getAttribute("value"),el.getElementById("endlon").getAttribute("value")],
