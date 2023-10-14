@@ -14,6 +14,7 @@ public class RoutResponse {
     private double userLon;
     private double endLat;
     private double endLon;
+    private long timeWithWorkLoad;
 }
 
 /*

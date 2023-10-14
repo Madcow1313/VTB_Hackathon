@@ -2,8 +2,6 @@ package com.example.BankBranch.controller;
 
 import com.example.BankBranch.dto.InputData;
 import com.example.BankBranch.dto.RoutResponse;
-import com.example.BankBranch.dto.SalePointDto;
-import com.example.BankBranch.model.Point;
 import com.example.BankBranch.service.GraphHopperService;
 import com.example.BankBranch.storage.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -39,20 +36,12 @@ public class GreetingController {
     public String handleJsonRequest(@RequestBody InputData request,
                                     Model model) {
         try {
-
             if (request != null) {
-                double lat = request.getLat();
-                double lng = request.getLng();
 
-                System.out.println("lat: " + lat);
-                System.out.println("lng: " + lng);
+                System.out.println("UserLat: " + request.getLat());
+                System.out.println("UserLng: " + request.getLng());
 
-                Point userPoint = new Point(lat, lng);
-
-                List<SalePointDto> salePointDtoList = graphHopperService.findNearestBranches(lat, lng, storage.getSalePointDtoList());
-                salePointDtoList.forEach(System.out::println);
-
-                Optional<RoutResponse> optionalRoutResponse = graphHopperService.findOptimalRoute(salePointDtoList, userPoint);
+                Optional<RoutResponse> optionalRoutResponse = graphHopperService.findOptimalRoute(request);
 
                 if (optionalRoutResponse.isPresent()) {
                     model.addAttribute("endLat", optionalRoutResponse.get().getEndLat());
@@ -63,7 +52,7 @@ public class GreetingController {
                     System.out.println("######## endLon " + optionalRoutResponse.get().getEndLon());
                 }
                 model.addAttribute("message", "false");
-                model.addAttribute("allSalePoint", storage.getSalePointList() );
+                model.addAttribute("allSalePoint", storage.getSalePointList());
 
             } else {
                 System.out.println("Invalid JSON structure: latlng or its components are missing.");

@@ -96,6 +96,9 @@ public class Storage {
         return SalePointDto.builder()
                 .latitude(salePoint.getLatitude())
                 .longitude(salePoint.getLongitude())
+                .servicesIndividual(salePoint.getServicesIndividual())
+                .servicesLegalEntity(salePoint.getServicesLegalEntity())
+                .workload(salePoint.getWorkload())
                 .build();
     }
 

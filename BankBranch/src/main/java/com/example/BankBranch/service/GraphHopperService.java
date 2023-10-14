@@ -1,10 +1,13 @@
 package com.example.BankBranch.service;
 
+import com.example.BankBranch.dto.InputData;
 import com.example.BankBranch.dto.PlacesResponse;
 import com.example.BankBranch.dto.RoutResponse;
 import com.example.BankBranch.dto.SalePointDto;
 import com.example.BankBranch.model.Point;
+import com.example.BankBranch.storage.Storage;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -20,10 +23,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 public class GraphHopperService {
 
-    private static final int NUM_NEAREST_BRANCHES = 3;
+    private static final int NUM_NEAREST_BRANCHES = 20;
 //    private static final double USER_Latitude = 55.755864;
 //    private static final double USER_Longitude = 37.617698;
 
@@ -35,6 +39,9 @@ public class GraphHopperService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private Storage storage;
 
     public RoutResponse findRoute(double userLat, double userLon, double endLat, double endLon) throws IOException {
 
@@ -115,14 +122,26 @@ public class GraphHopperService {
         return R * c * 1000;
     }
 
-    public Optional<RoutResponse> findOptimalRoute(List<SalePointDto> salePointDtoList, Point userPoint) throws IOException {
+    public Optional<RoutResponse> findOptimalRoute(InputData request) throws IOException {
+
+        List<SalePointDto> salePointDtoList = findNearestBranches(request.getLat(), request.getLng(), storage.getSalePointDtoList());
+        salePointDtoList.forEach(System.out::println);
 
         List<RoutResponse> routResponses = new ArrayList<>();
 
         for (SalePointDto spd : salePointDtoList) {
-            routResponses.add(findRoute(userPoint.getLat(), userPoint.getLng(), spd.getLatitude(), spd.getLongitude()));
+            RoutResponse routResponse = findRoute(request.getLat(), request.getLng(), spd.getLatitude(), spd.getLongitude());
+            routResponse.setTimeWithWorkLoad(spd.getWorkload() + routResponse.getPaths().get(0).getTime());
+            routResponses.add(routResponse);
+
         }
 
-        return routResponses.stream().min(Comparator.comparingInt(response -> response.getPaths().get(0).getTime()));
+        routResponses.forEach(System.out::println);
+
+        Optional<RoutResponse> optionalRoutResponse = routResponses.stream().min(Comparator.comparingInt(response -> (int) response.getTimeWithWorkLoad()));
+
+        log.info("optionalRoutResponse = {}", optionalRoutResponse);
+
+        return optionalRoutResponse;
     }
 }
