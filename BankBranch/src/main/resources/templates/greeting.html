@@ -28,8 +28,8 @@
 
 
 
-<p th:text="${endLat}"/>
-<p th:text="${endLon}"/>
+<p id="endlat" value="123" th:attr="value=${endLat}"/>
+<p id="endlon" value="123" th:attr="value=${endLon}"/>
 <!-- <div class="container p-4">
 
     <p th:text="'Hello, ' + ${name} + '!'"/>
@@ -63,6 +63,8 @@
         <option id="empty" value="empty">Выберите услугу</option>
         <option id="credit" value="credit">кредит</option>
         <option id="ATM" value="ATM">банкомат</option>
+        <option id="leasing" value="ATM">лизинг</option>
+        <option id="eq" value="ATM">эквайринг</option>
     </select>
     <button id="walking" class="button" style="width: 40px; margin-left: 10px">
         <img id="vehicle" class="vehicle" src="icon-walk.png" placeholder="https://www.flaticon.com/ru/free-icons/- Аллея славы иконки от icon_small - Flaticon"
@@ -79,7 +81,7 @@
 <!--<div class="parent">-->
 <!--    <div id="test_button1" class="button">test_button1</div>-->
 <!--</div>-->
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
 
     let banks = new Map()
     let walkingBtn = document.getElementById('walking')
@@ -136,6 +138,8 @@
     drawBanks()
     // point1.on('click', onMapClick)
     let point2 = L.marker([55.802387, 49.185576], {icon: iconBank});
+    point2 = L.marker([document.getElementById('endlat').getAttribute('th:text'),
+        document.getElementById('endlon').getAttribute('th:text')], {icon: iconBank})
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
@@ -200,8 +204,9 @@
     let rec = document.getElementById('recommended')
     let userType = document.getElementById('user_type')
     let service = document.getElementById('service')
-
-    rec.addEventListener('click', ()=> {
+    let latitude =  document.getElementById('endlat')
+    let longitude =  document.getElementById('endlon')
+    response = ()=> {
         let data = JSON.stringify({
             "latlng": point1.getLatLng(),
             "service": service.value,
@@ -209,17 +214,23 @@
             "vehicle": hasVehicle ? "Yes" : "NO"
         });
         console.log(data)
-        xhr.open("GET", "http://localhost:8080?data=" + encodeURIComponent(data))
+        // xhr.open("POST", "http://localhost:8080?data=" + encodeURIComponent(data))
+        xhr.open("POST", "http://localhost:8080")
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                console.log(latitude, longitude)
+                L.marker([ latitude, longitude]).addTo(map)
+            }
+        }
         xhr.setRequestHeader("Content-Type", "application/json");
-        // xhr.onreadystatechange = function () {
-        //     if (xhr.readyState === 4 && xhr.status === 200) {
-        //         let json = JSON.parse(xhr.responseText);
-        //         console.log(json.email + ", " + json.password);
-        //     }
-        // };
         console.log(point1.getLatLng())
+        // L.marker([document.getElementById('endlat').getAttribute('th:text'),
+        //     document.getElementById('endlon').getAttribute('th:text')], {icon: iconBank}).addTo(map)
         xhr.send(data);
-    })
+    }
+    rec.addEventListener("onload", response)
+
+    rec.addEventListener('click', response)
 
 </script>
 </div>
