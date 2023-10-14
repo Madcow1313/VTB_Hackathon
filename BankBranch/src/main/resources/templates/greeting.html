@@ -32,30 +32,36 @@
 
     <div th:replace="~{fragments/createPath :: createPath}">createPath</div>
 </div> -->
+<div id="info" style="margin-left: 50px; visibility: hidden; position:absolute">
+    <label>Рабочие дни: пн. вт. ср. чт. пт.</label>
+    <br>
+    <label>Время работы: 8:00-18:00</label>
+    <br>
+    <label>Телефон: 12-345-67-89</label>
+</div>
 <div class="parent">
     <div id="map" class="map_window" style="width: 1024px; height: 768px;"></div>
-    <div id="info" style="margin-left: 15px; visibility: hidden">
-        <label>Рабочие дни: пн. вт. ср. чт. пт.</label>
-        <br>
-        <label>Время работы: 8:00-18:00</label>
-        <br>
-        <label>Телефон: 12-345-67-89</label>
-    </div>
 </div>
 <div class="parent">
     <label>Кликните на карту, чтобы построить маршрут</label>
 </div>
 <div class="parent">
     <button id="userPosButton" class="button">Сбросить</button>
-    <select class="dropDown" style="margin-left: 10px;">
+    <select id="user_type" class="dropDown" style="margin-left: 10px;">
         <option value="physical">Юридическое лицо</option>
         <option value="company">Физическое лицо</option>
+    </select>
+    <select id="service" class="dropDown" style="margin-left: 10px;">
+        <option id="empty" value="empty">Выберите услугу</option>
+        <option id="credit" value="credit">кредит</option>
+        <option id="ATM" value="ATM">банкомат</option>
     </select>
     <button id="walking" class="button" style="width: 40px; margin-left: 10px">
         <img id="vehicle" class="vehicle" src="icon-walk.png" placeholder="https://www.flaticon.com/ru/free-icons/- Аллея славы иконки от icon_small - Flaticon"
         style="height: 30px; width: 30px"
         >
     </button>
+    <button id="recommended" class="button">Рекомендуемое отделение</button>
 </div>
 <div class="parent">
 </div>
@@ -172,6 +178,25 @@
     //     ],
     //     routeWhileDragging: true
     // }).addTo(map);
+
+    let xhr = new XMLHttpRequest();
+    let rec = document.getElementById('recommended')
+    let userType = document.getElementById('user_type')
+    let service = document.getElementById('service')
+
+    rec.addEventListener('click', ()=> {
+        let data = JSON.stringify({"latlng": point1.getLatLng()});
+        xhr.open("GET", "http://localhost:8080?data=" + encodeURIComponent(data))
+        xhr.setRequestHeader("Content-Type", "application/json");
+        // xhr.onreadystatechange = function () {
+        //     if (xhr.readyState === 4 && xhr.status === 200) {
+        //         let json = JSON.parse(xhr.responseText);
+        //         console.log(json.email + ", " + json.password);
+        //     }
+        // };
+        console.log(point1.getLatLng())
+        xhr.send(data);
+    })
 
 </script>
 </div>
