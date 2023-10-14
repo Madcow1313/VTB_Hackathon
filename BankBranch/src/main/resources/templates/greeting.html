@@ -214,7 +214,8 @@
             "vehicle": hasVehicle ? "Yes" : "NO"
         });
         console.log(data)
-        xhr.open("POST", "http://localhost:8080?data=" + encodeURIComponent(data))
+        // xhr.open("POST", "http://localhost:8080?data=" + encodeURIComponent(data))
+        xhr.open("POST", "http://localhost:8080")
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 console.log(latitude, longitude)
