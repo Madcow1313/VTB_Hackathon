@@ -34,32 +34,107 @@
 </div> -->
 <div class="parent">
     <div id="map" class="map_window" style="width: 1024px; height: 768px;"></div>
+    <div id="info" style="margin-left: 15px; visibility: hidden">
+        <label>Рабочие дни: пн. вт. ср. чт. пт.</label>
+        <br>
+        <label>Время работы: 8:00-18:00</label>
+        <br>
+        <label>Телефон: 12-345-67-89</label>
+    </div>
 </div>
-<div class="container p-4" ></div>
-<div th:replace="~{fragments/findPlace :: findPlace}">findPlace</div>
-<div th:replace="~{fragments/createPath :: createPath}">createPath</div>
+<div class="parent">
+    <label>Кликните на карту, чтобы построить маршрут</label>
+</div>
+<div class="parent">
+    <button id="userPosButton" class="button">Сбросить</button>
+    <select class="dropDown" style="margin-left: 10px;">
+        <option value="physical">Юридическое лицо</option>
+        <option value="company">Физическое лицо</option>
+    </select>
+    <button id="walking" class="button" style="width: 40px; margin-left: 10px">
+        <img id="vehicle" class="vehicle" src="icon-walk.png" placeholder="https://www.flaticon.com/ru/free-icons/- Аллея славы иконки от icon_small - Flaticon"
+        style="height: 30px; width: 30px"
+        >
+    </button>
+</div>
+<div class="parent">
+</div>
+<!--<div class="container p-4" ></div>-->
+<!--<div th:replace="~{fragments/findPlace :: findPlace}">findPlace</div>-->
+<!--<div th:replace="~{fragments/createPath :: createPath}">createPath</div>-->
 <!--<div class="parent">-->
 <!--    <div id="test_button1" class="button">test_button1</div>-->
 <!--</div>-->
 <script type="text/javascript">
-    var map = L.map('map').setView([55.781863, 49.124884], 13);
 
+    let banks = new Map()
+    let walkingBtn = document.getElementById('walking')
+    let iconUser = L.icon({
+        iconUrl: "user.png",
+        iconSize:     [30, 30],
+        iconAnchor:   [22, 22],
+    })
+    let iconBank = L.icon({
+        iconUrl: "VTB_logo_ru.png",
+        iconSize:     [60, 34],
+    })
+    const options = {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 27000,
+    }
+    let map = L.map('map').setView([0,0], 13);
+    let point1 =  L.marker([55.781863, 49.124884], {icon: iconUser});
+
+    banks.set(1, L.marker([55.792387, 49.185576], {icon: iconBank}))
+    banks.set(2, L.marker([55.802387, 49.185576], {icon: iconBank}))
+
+    walkingBtn.addEventListener('click', () => {
+        let img = document.getElementById('vehicle')
+        if (img.getAttribute('src') === 'icon-walk.png') {
+            img.setAttribute('src', 'car.png')
+        } else {
+            img.setAttribute('src', 'icon-walk.png')
+        }
+
+    })
+
+    getCurrentPosition = () => navigator.geolocation.getCurrentPosition((position) => {
+        point1 = L.marker([position.coords.latitude, position.coords.longitude], {icon: iconUser});
+        map.setView(point1.getLatLng(), 13)
+        map.addLayer(point1);
+        point1.addTo(map);
+    }, () => {}, options)
+    getCurrentPosition()
+
+    function drawBanks(){
+        for (let [key, value] of banks) {
+            value.addTo(map)
+            console.log(value.latlng)
+        }
+    }
+    drawBanks()
+    // point1.on('click', onMapClick)
+    let point2 = L.marker([55.802387, 49.185576], {icon: iconBank});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
     let r = null
     map.on('click', onMapClick);
-    let point1 = L.marker([55.781863, 49.124884]);
-    map.addLayer(point1);
-    let point2 = L.marker([55.795343, 49.106515]).addTo(map);
-    function onMapClick(e) {
+    let myPos = document.getElementById('userPosButton')
+    let info = document.getElementById("info")
+    myPos.addEventListener('click', () => {
+        map.removeLayer(point1)
+        map.removeControl(r)
+        getCurrentPosition()
+        info.style.visibility = "hidden"
+    })
+    function onMarkerClick(e) {
         if (r != null) {
             map.removeControl(r);
             r = null;
         }
-        map.removeLayer(point1)
-        point1 = L.marker(e.latlng)
-        map.addLayer(point1)
+        point2 = L.marker(e.latlng,{icon: iconBank})
         r = L.Routing.control({
             waypoints: [
                 point2.getLatLng(),
@@ -68,6 +143,25 @@
             routeWhileDragging: true
         })
         r.addTo(map)
+        info.style.visibility = "visible"
+    }
+    point2.on('click', onMarkerClick)
+
+    function onMapClick(e) {
+        if (r != null) {
+            map.removeControl(r);
+            r = null;
+        }
+        map.addLayer(point1)
+        r = L.Routing.control({
+            waypoints: [
+                e.latlng,
+                point1.getLatLng()
+            ],
+            routeWhileDragging: true
+        })
+        r.addTo(map)
+        info.style.visibility = "visible"
 
     }
     // L.Routing.control({

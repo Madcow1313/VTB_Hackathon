@@ -1,6 +1,6 @@
 .parent {
     display: flex;
-    justify-content: center !important;
+    justify-content: center;
 }
 
 .map_window {
@@ -8,14 +8,33 @@
 }
 
 .button {
-    background-color: lightgray;
-    color: #0e36ca;
+    background-color: #0A2896;
+    color: white;
     border-radius: 8px;
     margin-top: 10px;
-    padding: 8px;
+    padding: 5px;
     height: 40px;
     min-width: 100px;
     width: fit-content;
+    border-color: white;
+}
+
+.dropDown {
+    position: relative;
+    min-width: fit-content;
+    width: 200px;
+    height: 40px;
+    border-radius: 8px;
+    border-color: #0A2896;
+    background-color: white;
+    margin-top: 10px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.vehicle {
+    border-radius: 8px;
+    border-color: #0A2896;
 }
 
 /*input[type='text'] {*/
