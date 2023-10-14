@@ -64,6 +64,9 @@ public class GreetingController {
                 if (optionalRoutResponse.isPresent()) {
                     model.addAttribute("endLat", optionalRoutResponse.get().getEndLat());
                     model.addAttribute("endLon", optionalRoutResponse.get().getEndLon());
+
+                    System.out.println("######## endLat " + optionalRoutResponse.get().getEndLat());
+                    System.out.println("######## endLon " + optionalRoutResponse.get().getEndLon());
                 }
 
             } else {
