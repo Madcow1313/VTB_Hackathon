@@ -59,7 +59,9 @@
         "22": {"min": 0, "max": 2},
         "23": {"min": 0, "max": 2},
         "24": {"min": 0, "max": 2}
-      }
+      },
+      "speedIndQueue": 5,
+      "speedLegalQueue": 5
     },
     {
       "day": "tuesday",
@@ -120,7 +122,9 @@
         "22": {"min": 0, "max": 2},
         "23": {"min": 0, "max": 2},
         "24": {"min": 0, "max": 2}
-      }
+      },
+      "speedIndQueue": 5,
+      "speedLegalQueue": 5
     },
     {
       "day": "wednesday",
@@ -181,7 +185,9 @@
         "22": {"min": 0, "max": 2},
         "23": {"min": 0, "max": 2},
         "24": {"min": 0, "max": 2}
-      }
+      },
+      "speedIndQueue": 5,
+      "speedLegalQueue": 5
     },
     {
       "day": "thursday",
@@ -242,7 +248,9 @@
         "22": {"min": 0, "max": 2},
         "23": {"min": 0, "max": 2},
         "24": {"min": 0, "max": 2}
-      }
+      },
+      "speedIndQueue": 5,
+      "speedLegalQueue": 5
     },
     {
       "day": "friday",
@@ -303,7 +311,9 @@
         "22": {"min": 0, "max": 2},
         "23": {"min": 0, "max": 2},
         "24": {"min": 0, "max": 2}
-      }
+      },
+      "speedIndQueue": 5,
+      "speedLegalQueue": 5
     },
     {
       "day": "saturday",
@@ -364,7 +374,9 @@
         "22": {"min": 0, "max": 2},
         "23": {"min": 0, "max": 2},
         "24": {"min": 0, "max": 2}
-      }
+      },
+      "speedIndQueue": 5,
+      "speedLegalQueue": 5
     },
     {
       "day": "sunday",
@@ -425,7 +437,9 @@
         "22": {"min": 0, "max": 2},
         "23": {"min": 0, "max": 2},
         "24": {"min": 0, "max": 2}
-      }
+      },
+      "speedIndQueue": 5,
+      "speedLegalQueue": 5
     }
   ]
 }

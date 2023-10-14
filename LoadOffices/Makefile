@@ -10,4 +10,4 @@ down:
 	docker-compose down
 
 uvicorn:
-	uvicorn --port 8000 src.main:app --reload
+	uvicorn --port 8001 main:app --reload
