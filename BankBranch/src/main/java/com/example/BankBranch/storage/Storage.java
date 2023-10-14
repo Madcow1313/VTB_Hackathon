@@ -48,16 +48,26 @@ public class Storage {
     private void generateAdditionalData() {
 
         // Список возможных услуг
+        /*
+         * user_type=physical
+         * user_type=company
+         *
+         * service=ATM
+         * service=credit
+         * service=acquiring
+         * service=leasing
+         * */
         List<String> possibleServices = Arrays.asList(
-                "кредит",
-                "кредит",
-                "кредит",
-                "лизинг",
-                "лизинг",
-                "эквайринг",
-                "банкомат",
-                "банкомат",
-                "банкомат");
+                "credit",
+                "credit",
+                "credit",
+                "credit",
+                "leasing",
+                "leasing",
+                "acquiring",
+                "ATM",
+                "ATM",
+                "ATM");
 
         Random random = new Random();
 

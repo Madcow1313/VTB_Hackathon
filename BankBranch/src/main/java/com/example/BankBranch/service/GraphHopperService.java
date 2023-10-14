@@ -4,7 +4,6 @@ import com.example.BankBranch.dto.InputData;
 import com.example.BankBranch.dto.PlacesResponse;
 import com.example.BankBranch.dto.RoutResponse;
 import com.example.BankBranch.dto.SalePointDto;
-import com.example.BankBranch.model.Point;
 import com.example.BankBranch.storage.Storage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
@@ -43,10 +42,19 @@ public class GraphHopperService {
     @Autowired
     private Storage storage;
 
-    public RoutResponse findRoute(double userLat, double userLon, double endLat, double endLon) throws IOException {
+    public RoutResponse findRoute(InputData inputData, double endLat, double endLon) throws IOException {
+
+        //todo это жесткий упоротый хардкод, руки за такое оторвать
+        String vehicle;
+        if ("YES".equalsIgnoreCase(inputData.getVehicle())) {
+            vehicle = "car";
+        } else {
+            vehicle = "foot";
+        }
 
         Request request = new Request.Builder()
-                .url("https://graphhopper.com/api/1/route?point=" + userLat + "," + userLon + "&point=" + endLat + "," + endLon + "&profile=car&locale=de&calc_points=false&key=" + graphhopperApiKey)
+                //todo ну можно же было нормально написать через билдер
+                .url("https://graphhopper.com/api/1/route?point=" + inputData.getLat() + "," + inputData.getLng() + "&point=" + endLat + "," + endLon + "&profile=" + vehicle + "&locale=de&calc_points=false&key=" + graphhopperApiKey)
                 .get()
                 .build();
 
@@ -55,8 +63,8 @@ public class GraphHopperService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String responseBody = response.body().string();
                 RoutResponse routResponse = objectMapper.readValue(responseBody, RoutResponse.class);
-                routResponse.setUserLat(userLat);
-                routResponse.setUserLon(userLon);
+                routResponse.setUserLat(inputData.getLat());
+                routResponse.setUserLon(inputData.getLng());
                 routResponse.setEndLat(endLat);
                 routResponse.setEndLon(endLon);
                 return routResponse;
@@ -93,13 +101,23 @@ public class GraphHopperService {
     }
 
 
-    public List<SalePointDto> findNearestBranches(double userLatitude, double userLongitude, List<SalePointDto> branches) {
+    public List<SalePointDto> findNearestBranches(InputData request, List<SalePointDto> branches) {
+
+        /*
+        * user_type=physical
+        * user_type=company
+        *
+        * service=ATM
+        * service=credit
+        * service=acquiring
+        * service=leasing
+        * */
         return branches.stream()
                 .filter(branch -> branch.getLatitude() != 0 && branch.getLongitude() != 0)
                 .peek(branch -> {
                     double branchLatitude = branch.getLatitude();
                     double branchLongitude = branch.getLongitude();
-                    double distance = calculateDistance(userLatitude, userLongitude, branchLatitude, branchLongitude);
+                    double distance = calculateDistance(request.getLat(), request.getLng(), branchLatitude, branchLongitude);
                     branch.setDistanceToClient(distance);
                 })
                 .sorted(Comparator.comparingDouble(SalePointDto::getDistanceToClient))
@@ -124,13 +142,13 @@ public class GraphHopperService {
 
     public Optional<RoutResponse> findOptimalRoute(InputData request) throws IOException {
 
-        List<SalePointDto> salePointDtoList = findNearestBranches(request.getLat(), request.getLng(), storage.getSalePointDtoList());
+        List<SalePointDto> salePointDtoList = findNearestBranches(request, storage.getSalePointDtoList());
         salePointDtoList.forEach(System.out::println);
 
         List<RoutResponse> routResponses = new ArrayList<>();
 
         for (SalePointDto spd : salePointDtoList) {
-            RoutResponse routResponse = findRoute(request.getLat(), request.getLng(), spd.getLatitude(), spd.getLongitude());
+            RoutResponse routResponse = findRoute(request, spd.getLatitude(), spd.getLongitude());
             routResponse.setTimeWithWorkLoad(spd.getWorkload() + routResponse.getPaths().get(0).getTime());
             routResponses.add(routResponse);
 
