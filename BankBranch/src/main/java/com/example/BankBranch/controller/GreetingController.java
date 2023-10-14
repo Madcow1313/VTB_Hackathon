@@ -64,11 +64,12 @@ public class GreetingController {
                 if (optionalRoutResponse.isPresent()) {
                     model.addAttribute("endLat", optionalRoutResponse.get().getEndLat());
                     model.addAttribute("endLon", optionalRoutResponse.get().getEndLon());
-                    model.addAttribute("message", "message");
+                    model.addAttribute("message", "true");
 
                     System.out.println("######## endLat " + optionalRoutResponse.get().getEndLat());
                     System.out.println("######## endLon " + optionalRoutResponse.get().getEndLon());
                 }
+                model.addAttribute("message", "false");
 
             } else {
                 System.out.println("Invalid JSON structure: latlng or its components are missing.");
@@ -78,6 +79,13 @@ public class GreetingController {
             e.printStackTrace();
         }
         return "greeting";
+    }
+
+    @PostMapping("/")
+    public String greeting(
+            Model model) {
+        model.addAttribute("message", "false");
+        return "test";
     }
 
 
