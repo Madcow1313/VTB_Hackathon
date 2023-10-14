@@ -113,7 +113,11 @@
     })
 
     getCurrentPosition = () => navigator.geolocation.getCurrentPosition((position) => {
-        point1 = L.marker([position.coords.latitude, position.coords.longitude], {icon: iconUser});
+        // point1 = L.marker([position.coords.latitude, position.coords.longitude], {icon: iconUser});
+        // map.setView(point1.getLatLng(), 13)
+        // map.addLayer(point1);
+        // point1.addTo(map);
+        point1 = L.marker([55.755864, 37.617698], {icon: iconUser})
         map.setView(point1.getLatLng(), 13)
         map.addLayer(point1);
         point1.addTo(map);
@@ -159,22 +163,26 @@
         info.style.visibility = "visible"
     }
     point2.on('click', onMarkerClick)
-
+    let chooseOnMap = false
     function onMapClick(e) {
-        if (r != null) {
-            map.removeControl(r);
-            r = null;
+        if (chooseOnMap) {
+
+        } else {
+            if (r != null) {
+                map.removeControl(r);
+                r = null;
+            }
+            map.addLayer(point1)
+            r = L.Routing.control({
+                waypoints: [
+                    e.latlng,
+                    point1.getLatLng()
+                ],
+                routeWhileDragging: true
+            })
+            r.addTo(map)
+            info.style.visibility = "visible"
         }
-        map.addLayer(point1)
-        r = L.Routing.control({
-            waypoints: [
-                e.latlng,
-                point1.getLatLng()
-            ],
-            routeWhileDragging: true
-        })
-        r.addTo(map)
-        info.style.visibility = "visible"
     }
     // L.Routing.control({
     //     waypoints: [
