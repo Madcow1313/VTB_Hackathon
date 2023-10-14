@@ -206,20 +206,36 @@
     let service = document.getElementById('service')
     let latitude =  document.getElementById('endlat')
     let longitude =  document.getElementById('endlon')
+
+    const re = new RegExp(".endlat.")
     response = ()=> {
         let data = JSON.stringify({
+            // "lat": point1.getLatLng().lat,
+            // "lng": point1.getLatLng().lng,
             "latlng": point1.getLatLng(),
             "service": service.value,
             "user_type": userType.value,
             "vehicle": hasVehicle ? "Yes" : "NO"
         });
         console.log(data)
-        // xhr.open("POST", "http://localhost:8080?data=" + encodeURIComponent(data))
-        xhr.open("POST", "http://localhost:8080")
+        xhr.open("GET", "http://localhost:8080?data=" + encodeURIComponent(data))
+        // xhr.open("POST", "http://localhost:8080")
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE) {
-                console.log(latitude, longitude)
-                L.marker([ latitude, longitude]).addTo(map)
+                // console.log(latitude, longitude)
+                // L.marker([ latitude, longitude]).addTo(map)
+                let el = new DOMParser().parseFromString(xhr.responseText, "text/html")
+                console.log("new",el.getElementById("endlat").getAttribute("value"))
+                console.log("new",el.getElementById("endlon").getAttribute("value"))
+                r = L.Routing.control({
+                    waypoints: [
+                        [el.getElementById("endlat").getAttribute("value"),el.getElementById("endlon").getAttribute("value")],
+                        point1.getLatLng()
+                    ],
+                    routeWhileDragging: true
+                })
+                r.addTo(map)
+                info.style.visibility = "visible"
             }
         }
         xhr.setRequestHeader("Content-Type", "application/json");
