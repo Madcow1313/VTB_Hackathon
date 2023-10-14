@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 public class GraphHopperService {
+    //todo много разной логики в одном классе, надо разделить
 
+    //todo определять в будущем только с помощью ИИ, на что нужно много деняк
     private static final int NUM_NEAREST_BRANCHES = 20;
-//    private static final double USER_Latitude = 55.755864;
-//    private static final double USER_Longitude = 37.617698;
 
     @Value("${graphhopper.api.key}")
     private String graphhopperApiKey;
@@ -86,6 +86,7 @@ public class GraphHopperService {
             if (response.isSuccessful()) {
                 return response.body().string();
             } else {
+                //todo ошибки для слабаков fail fast
                 // Обработка ошибки, если ответ не успешен
                 throw new IOException("Unexpected code " + response);
             }
@@ -104,16 +105,24 @@ public class GraphHopperService {
     public List<SalePointDto> findNearestBranches(InputData request, List<SalePointDto> branches) {
 
         /*
-        * user_type=physical
-        * user_type=company
-        *
-        * service=ATM
-        * service=credit
-        * service=acquiring
-        * service=leasing
-        * */
+         * user_type=physical
+         * user_type=company
+         *
+         * service=ATM
+         * service=credit
+         * service=acquiring
+         * service=leasing
+         * */
         return branches.stream()
                 .filter(branch -> branch.getLatitude() != 0 && branch.getLongitude() != 0)
+                .filter(branch -> {
+                    if ("physical".equals(request.getUser_type())) {
+                        return branch.getServicesIndividual().contains(request.getService());
+                    } else if ("company".equals(request.getUser_type())) {
+                        return branch.getServicesLegalEntity().contains(request.getService());
+                    }
+                    return false; // Возврат false, если user_type не соответствует "physical" или "company"
+                })
                 .peek(branch -> {
                     double branchLatitude = branch.getLatitude();
                     double branchLongitude = branch.getLongitude();

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//todo и тут тоже ентити
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor

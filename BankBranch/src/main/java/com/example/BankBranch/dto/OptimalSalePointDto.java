@@ -13,6 +13,4 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OptimalSalePointDto {
     private Point point;
-
-
 }

@@ -11,15 +11,10 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 public class SalePointDto {
-
     private double latitude;
-
     private double longitude;
-
     private Set<String> servicesIndividual;
     private Set<String> servicesLegalEntity;
     private Long workload;
-
     private double distanceToClient;
-
 }

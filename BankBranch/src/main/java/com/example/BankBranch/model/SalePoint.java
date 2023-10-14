@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 import java.util.Set;
 
-
+//todo тут должна быть ентити
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalePoint {
