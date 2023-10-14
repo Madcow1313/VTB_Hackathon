@@ -8,12 +8,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
 
 
-
+//        String filePath = "BankBranch/src/main/resources/offices_test.json";
         String filePath = "BankBranch/src/main/resources/offices.json";
 
         try {
@@ -25,28 +28,50 @@ public class Main {
             SalePoint[] salePoints = objectMapper.readValue(jsonString, SalePoint[].class);
 
             System.out.println("salePoints.length " + salePoints.length);
+
+            Arrays.stream(salePoints)
+                    .forEach(salePoint -> {
+                        String address = salePoint.getAddress();
+                        int indexOfCity = address.indexOf("г. ");
+                        if (indexOfCity != -1) {
+                            int indexOfComma = address.indexOf(',', indexOfCity);
+                            if (indexOfComma != -1) {
+                                String city = address.substring(indexOfCity + 3, indexOfComma).trim();
+                                salePoint.setCity(city);
+                            }
+                        }
+                    });
+
             System.out.println(salePoints[0]);
 
-            // Теперь у вас есть массив объектов SalePoint, содержащий данные из JSON
-//            for (SalePoint salePoint : salePoints) {
-//                System.out.println("Sale Point Name: " + salePoint.getSalePointName());
-//                System.out.println("Address: " + salePoint.getAddress());
-//                System.out.println("Status: " + salePoint.getStatus());
-//                // ... и так далее
-//            }
+//            List<String> cities = Arrays.stream(salePoints)
+//                    .map(SalePoint::getCity)
+//                    .filter(city -> city != null && !city.isEmpty())
+//                    .distinct()
+//                    .collect(Collectors.toList());
+//
+//            System.out.println("cities = " + cities.size());
+//
+//            cities.forEach(System.out::println);
+
+            Map<String, Long> cityCountMap = Arrays.stream(salePoints)
+                    .filter(salePoint -> salePoint.getCity() != null && !salePoint.getCity().isEmpty())
+                    .collect(Collectors.groupingBy(SalePoint::getCity, Collectors.counting()));
+
+            cityCountMap.forEach((city, count) -> {
+                System.out.println(city + ": " + count);
+            });
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static String readFileAsString(String filePath) throws IOException {
-        // Используем Paths.get для создания объекта Path из строки с путем к файлу
+
         Path path = Paths.get(filePath).toAbsolutePath().normalize();
 
-
-
-        // Используем метод Files.readString для чтения содержимого файла в виде строки
-        // В данном случае мы указываем кодировку UTF-8
         return Files.readString(path, StandardCharsets.UTF_8);
     }
 }
