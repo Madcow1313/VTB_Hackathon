@@ -4,7 +4,7 @@
     <title>Getting Started: Serving Web Content</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" th:href="@{style.css}" type="text/css"/>
     <!-- Подключение Leaflet.js -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -20,64 +20,190 @@
           crossorigin="anonymous">
 
 </head>
-<body>
+<body style="background-color: #ffffff; color: #2f3441;">
 
 
-<div class="container p-4">
+<!-- <div class="container p-4">
 
     <p th:text="'Hello, ' + ${name} + '!'"/>
-
-    <p th:text="${pointLat}"/>
 
 
     <div th:replace="~{fragments/findPlace :: findPlace}">findPlace</div>
 
     <div th:replace="~{fragments/createPath :: createPath}">createPath</div>
-
-
-    <div id="map" style="width: 1024px; height: 768px;"
-         th:data-lat="${pointLat}" th:data-lng="${pointLng}"></div>
-
-    <script type="text/javascript">
-
-
-    var mapElement = document.getElementById('map');
-var lat = parseFloat(mapElement.getAttribute('data-lat'));
-var lng = parseFloat(mapElement.getAttribute('data-lng'));
-
-var map = L.map('map').setView([lat, lng], 13);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
-
-var point = L.marker([lat, lng]).addTo(map);
-
-
-<!--     var map = L.map('map').setView([55.781863, 49.124884], 13);-->
-
-<!--    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {-->
-<!--        attribution: '© OpenStreetMap contributors'-->
-<!--    }).addTo(map);-->
-
-<!--    var point1 = L.marker([55.781863, 49.124884]).addTo(map);-->
-<!--    var point2 = L.marker([55.795343, 49.106515]).addTo(map);-->
-
-
-
-<!--    L.Routing.control({-->
-<!--        waypoints: [-->
-<!--            L.latLng(55.781863, 49.124884),-->
-<!--            L.latLng(55.795343, 49.106515)-->
-<!--        ],-->
-<!--        routeWhileDragging: true-->
-<!--    }).addTo(map);-->
-
-
-
-    </script>
-
+</div> -->
+<div id="info" style="margin-left: 50px; visibility: hidden; position:absolute">
+    <label>Рабочие дни: пн. вт. ср. чт. пт.</label>
+    <br>
+    <label>Время работы: 8:00-18:00</label>
+    <br>
+    <label>Телефон: 12-345-67-89</label>
 </div>
+<div class="parent">
+    <div id="map" class="map_window" style="width: 1024px; height: 768px;"></div>
+</div>
+<div class="parent">
+    <label>Кликните на карту, чтобы построить маршрут</label>
+</div>
+<div class="parent">
+    <button id="userPosButton" class="button">Сбросить</button>
+    <select id="user_type" class="dropDown" style="margin-left: 10px;">
+        <option value="physical">Юридическое лицо</option>
+        <option value="company">Физическое лицо</option>
+    </select>
+    <select id="service" class="dropDown" style="margin-left: 10px;">
+        <option id="empty" value="empty">Выберите услугу</option>
+        <option id="credit" value="credit">кредит</option>
+        <option id="ATM" value="ATM">банкомат</option>
+    </select>
+    <button id="walking" class="button" style="width: 40px; margin-left: 10px">
+        <img id="vehicle" class="vehicle" src="icon-walk.png" placeholder="https://www.flaticon.com/ru/free-icons/- Аллея славы иконки от icon_small - Flaticon"
+             style="height: 30px; width: 30px"
+        >
+    </button>
+    <button id="recommended" class="button">Рекомендуемое отделение</button>
+</div>
+<div class="parent">
+</div>
+<!--<div class="container p-4" ></div>-->
+<!--<div th:replace="~{fragments/findPlace :: findPlace}">findPlace</div>-->
+<!--<div th:replace="~{fragments/createPath :: createPath}">createPath</div>-->
+<!--<div class="parent">-->
+<!--    <div id="test_button1" class="button">test_button1</div>-->
+<!--</div>-->
+<script type="text/javascript">
+
+    let banks = new Map()
+    let walkingBtn = document.getElementById('walking')
+    let iconUser = L.icon({
+        iconUrl: "user.png",
+        iconSize:     [30, 30],
+        iconAnchor:   [22, 22],
+    })
+    let iconBank = L.icon({
+        iconUrl: "VTB_logo_ru.png",
+        iconSize:     [60, 34],
+    })
+    const options = {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 27000,
+    }
+    let map = L.map('map').setView([0,0], 13);
+    let point1 =  L.marker([55.781863, 49.124884], {icon: iconUser});
+
+    banks.set(1, L.marker([55.792387, 49.185576], {icon: iconBank}))
+    banks.set(2, L.marker([55.802387, 49.185576], {icon: iconBank}))
+
+    walkingBtn.addEventListener('click', () => {
+        let img = document.getElementById('vehicle')
+        if (img.getAttribute('src') === 'icon-walk.png') {
+            img.setAttribute('src', 'car.png')
+        } else {
+            img.setAttribute('src', 'icon-walk.png')
+        }
+
+    })
+
+    getCurrentPosition = () => navigator.geolocation.getCurrentPosition((position) => {
+        point1 = L.marker([position.coords.latitude, position.coords.longitude], {icon: iconUser});
+        map.setView(point1.getLatLng(), 13)
+        map.addLayer(point1);
+        point1.addTo(map);
+    }, () => {}, options)
+    getCurrentPosition()
+
+    function drawBanks(){
+        for (let [key, value] of banks) {
+            value.addTo(map)
+            console.log(value.latlng)
+        }
+    }
+    drawBanks()
+    // point1.on('click', onMapClick)
+    let point2 = L.marker([55.802387, 49.185576], {icon: iconBank});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    let r = null
+    map.on('click', onMapClick);
+    let myPos = document.getElementById('userPosButton')
+    let info = document.getElementById("info")
+    myPos.addEventListener('click', () => {
+        map.removeLayer(point1)
+        map.removeControl(r)
+        getCurrentPosition()
+        info.style.visibility = "hidden"
+    })
+    function onMarkerClick(e) {
+        if (r != null) {
+            map.removeControl(r);
+            r = null;
+        }
+        point2 = L.marker(e.latlng,{icon: iconBank})
+        r = L.Routing.control({
+            waypoints: [
+                point2.getLatLng(),
+                point1.getLatLng()
+            ],
+            routeWhileDragging: true
+        })
+        r.addTo(map)
+        info.style.visibility = "visible"
+    }
+    point2.on('click', onMarkerClick)
+
+    function onMapClick(e) {
+        if (r != null) {
+            map.removeControl(r);
+            r = null;
+        }
+        map.addLayer(point1)
+        r = L.Routing.control({
+            waypoints: [
+                e.latlng,
+                point1.getLatLng()
+            ],
+            routeWhileDragging: true
+        })
+        r.addTo(map)
+        info.style.visibility = "visible"
+
+    }
+    // L.Routing.control({
+    //     waypoints: [
+    //         L.latLng(55.781863, 49.124884),
+    //         L.latLng(55.795343, 49.106515),
+    //         point1.getLatLng()
+    //     ],
+    //     routeWhileDragging: true
+    // }).addTo(map);
+
+    let xhr = new XMLHttpRequest();
+    let rec = document.getElementById('recommended')
+    let userType = document.getElementById('user_type')
+    let service = document.getElementById('service')
+
+    rec.addEventListener('click', ()=> {
+        let data = JSON.stringify({"latlng": point1.getLatLng()});
+        xhr.open("GET", "http://localhost:8080?data=" + encodeURIComponent(data))
+        xhr.setRequestHeader("Content-Type", "application/json");
+        // xhr.onreadystatechange = function () {
+        //     if (xhr.readyState === 4 && xhr.status === 200) {
+        //         let json = JSON.parse(xhr.responseText);
+        //         console.log(json.email + ", " + json.password);
+        //     }
+        // };
+        console.log(point1.getLatLng())
+        xhr.send(data);
+    })
+
+</script>
+</div>
+
+
+
+
 
 
 </body>

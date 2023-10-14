@@ -10,6 +10,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalePoint {
 
+    private Long id;
+
     private String salePointName;
 
     private String city;

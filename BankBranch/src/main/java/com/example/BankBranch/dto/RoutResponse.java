@@ -10,6 +10,10 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RoutResponse {
     private List<Path> paths;
+    private double userLat;
+    private double userLon;
+    private double endLat;
+    private double endLon;
 }
 
 /*
