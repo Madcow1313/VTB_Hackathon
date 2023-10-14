@@ -5,7 +5,7 @@ from src.models import queeReturn, queeRequest, quee
 from datetime import datetime
 
 queue_data: dict
-with(open("src/loads_entry.json", "r") as file):
+with(open("src/loads_entry.json", "r")) as file:
     queue_data = json.loads("".join(file.readlines()))
 
 app = FastAPI()
