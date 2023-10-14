@@ -10,4 +10,11 @@ public class BankBranchApplication {
 		SpringApplication.run(BankBranchApplication.class, args);
 	}
 
+//	@Bean
+//	public CommandLineRunner loadData(SalePointRepository salePointRepository) {
+//		return args -> {
+//
+//		};
+//	}
+
 }
