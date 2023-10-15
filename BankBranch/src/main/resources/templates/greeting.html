@@ -50,21 +50,21 @@
     <div id="map" class="map_window" style="width: 1024px; height: 768px;"></div>
 </div>
 <div class="parent">
-    <label>Кликните на карту, чтобы построить маршрут</label>
+    <label>Кликните на карту, чтобы построить маршрут или позвольте нам это сделать за вас</label>
 </div>
 <div class="parent">
     <button id="recommended" class="button">Рекомендуемое отделение</button>
 
     <select id="user_type" class="dropDown" style="margin-left: 10px;">
-        <option value="physical">Юридическое лицо</option>
-        <option value="company">Физическое лицо</option>
+        <option value="company">Юридическое лицо</option>
+        <option value="physical">Физическое лицо</option>
     </select>
     <select id="service" class="dropDown" style="margin-left: 10px;">
         <option id="empty" value="empty">Выберите услугу</option>
         <option id="credit" value="credit">кредит</option>
         <option id="ATM" value="ATM">банкомат</option>
-        <option id="leasing" value="ATM">лизинг</option>
-        <option id="eq" value="ATM">эквайринг</option>
+        <option id="leasing" value="leasing">лизинг</option>
+        <option id="eq" value="acquiring">эквайринг</option>
     </select>
     <button id="walking" class="button" style="width: 40px; margin-left: 10px">
         <img id="vehicle" class="vehicle" src="icon-walk.png" placeholder="https://www.flaticon.com/ru/free-icons/- Аллея славы иконки от icon_small - Flaticon"
@@ -72,6 +72,7 @@
         >
     </button>
     <button id="userPosButton" class="button">Сбросить</button>
+    <button id="myPlace" class="button">Моё местоположение</button>
 </div>
 <div class="parent">
 </div>
@@ -84,6 +85,7 @@
 <script type="text/javascript" th:inline="javascript">
 
     let banks = new Map()
+
     let walkingBtn = document.getElementById('walking')
     let iconUser = L.icon({
         iconUrl: "user.png",
@@ -99,11 +101,24 @@
         maximumAge: 30000,
         timeout: 27000,
     }
+
+
     let map = L.map('map').setView([0,0], 13);
     let point1 =  L.marker([55.781863, 49.124884], {icon: iconUser});
     let hasVehicle = false
     banks.set(1, L.marker([55.792387, 49.185576], {icon: iconBank}))
     banks.set(2, L.marker([55.802387, 49.185576], {icon: iconBank}))
+    fetch('offices.json')
+        .then((response) => response.json())
+        .then((json) => {
+            let i = 3;
+            for (el of json){
+                // console.log(JSON.parse(JSON.stringify(el)))
+                L.marker([el.latitude, el.longitude], {icon: iconBank}).addTo(map)
+                i++
+            }
+        })
+
 
     walkingBtn.addEventListener('click', () => {
         let img = document.getElementById('vehicle')
@@ -132,7 +147,7 @@
     function drawBanks(){
         for (let [key, value] of banks) {
             value.addTo(map)
-            console.log(value.latlng)
+            console.log(value.latlng, key, value)
         }
     }
     drawBanks()
@@ -207,7 +222,20 @@
     let latitude =  document.getElementById('endlat')
     let longitude =  document.getElementById('endlon')
 
-    const re = new RegExp(".endlat.")
+    let dd = document.getElementsByClassName("dropDown")
+
+    userType.addEventListener('change', () => {
+        console.log(userType.value);
+        if (userType.value === 'company') {
+            document.getElementById('leasing').style.display = ''
+            document.getElementById('eq').style.display = ''
+        } else {
+            document.getElementById('leasing').style.display = 'none'
+            document.getElementById('eq').style.display = 'none'
+        }
+        // location.reload()
+    })
+
     response = ()=> {
         let data = JSON.stringify({
             // "lat": point1.getLatLng().lat,
@@ -252,6 +280,23 @@
 
     rec.addEventListener('click', response)
 
+    let myPlace = document.getElementById('myPlace')
+
+    getMyPlace = () => navigator.geolocation.getCurrentPosition((position) => {
+        map.removeLayer(point1)
+        point1 = L.marker([position.coords.latitude, position.coords.longitude], {icon: iconUser});
+        map.setView(point1.getLatLng(), 13)
+        map.addLayer(point1);
+        point1.addTo(map);
+        // point1 = L.marker([55.755864, 37.617698], {icon: iconUser})
+        // map.setView(point1.getLatLng(), 13)
+        // map.addLayer(point1);
+        // point1.addTo(map);
+    }, () => {}, options)
+
+    myPlace.addEventListener('click', () => {
+        getMyPlace()
+    })
 </script>
 </div>
 
