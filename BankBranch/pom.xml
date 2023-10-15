@@ -23,19 +23,19 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.graphhopper</groupId>
-			<artifactId>graphhopper-core</artifactId>
-			<version>7.0</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.graphhopper</groupId>-->
+<!--			<artifactId>graphhopper-core</artifactId>-->
+<!--			<version>7.0</version>-->
+<!--		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/com.graphhopper/directions-api-client-hc -->
-		<dependency>
-			<groupId>com.graphhopper</groupId>
-			<artifactId>directions-api-client-hc</artifactId>
-			<version>7.0</version>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.graphhopper</groupId>-->
+<!--			<artifactId>directions-api-client-hc</artifactId>-->
+<!--			<version>7.0</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/com.graphhopper/graphhopper-web -->
 		<dependency>
